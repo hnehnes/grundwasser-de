@@ -1,0 +1,12 @@
+{
+  "domain": "niwis",
+  "name": "NIWIS Niedrigwasser",
+  "codeowners": ["@hnehnes"],
+  "config_flow": true,
+  "documentation": "https://github.com/hnehnes/niwis",
+  "integration_type": "hub",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/hnehnes/niwis/issues",
+  "requirements": [],
+  "version": "1.0.0"
+}

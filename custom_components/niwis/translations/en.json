@@ -1,0 +1,85 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "NIWIS – add stations",
+        "description": "How would you like to search for stations?",
+        "menu_options": {
+          "radius": "Search near my location",
+          "query": "Search by name or station ID"
+        }
+      },
+      "radius": {
+        "title": "Radius search",
+        "description": "Radius around your Home Assistant location.",
+        "data": {
+          "radius": "Radius (km)"
+        }
+      },
+      "query": {
+        "title": "Search by name/ID",
+        "data": {
+          "query": "Name or station ID"
+        }
+      },
+      "select": {
+        "title": "Select stations",
+        "description": "Choose one or more stations.",
+        "data": {
+          "stations": "Stations"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect to the NIWIS API.",
+      "no_stations": "No stations found. Adjust your search."
+    },
+    "abort": {
+      "already_configured": "NIWIS is already set up. Use the options to add more stations."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "NIWIS options",
+        "menu_options": {
+          "settings": "Update interval & classification",
+          "add_radius": "Add stations near location",
+          "add_query": "Add stations by name/ID"
+        }
+      },
+      "settings": {
+        "title": "Settings",
+        "data": {
+          "scan_interval": "Update interval (hours)",
+          "klassifikationsart": "Classification type"
+        }
+      },
+      "add_radius": {
+        "title": "Add stations near location",
+        "data": {
+          "radius": "Radius (km)"
+        }
+      },
+      "add_query": {
+        "title": "Add stations by name/ID",
+        "data": {
+          "query": "Name or station ID"
+        }
+      },
+      "add_select": {
+        "title": "Select stations",
+        "data": {
+          "stations": "Stations"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect to the NIWIS API.",
+      "no_stations": "No stations found. Adjust your search."
+    },
+    "abort": {
+      "no_new_stations": "All discovered stations are already configured."
+    }
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "NIWIS – Messstellen hinzufügen",
+        "description": "Wie möchtest du Messstellen suchen?",
+        "menu_options": {
+          "radius": "Im Umkreis meines Standorts suchen",
+          "query": "Nach Name oder Stations-ID suchen"
+        }
+      },
+      "radius": {
+        "title": "Umkreissuche",
+        "description": "Radius um deinen Home-Assistant-Standort.",
+        "data": {
+          "radius": "Radius (km)"
+        }
+      },
+      "query": {
+        "title": "Suche nach Name/ID",
+        "data": {
+          "query": "Name oder Stations-ID"
+        }
+      },
+      "select": {
+        "title": "Messstellen auswählen",
+        "description": "Wähle eine oder mehrere Messstellen aus.",
+        "data": {
+          "stations": "Messstellen"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Verbindung zur NIWIS-API fehlgeschlagen.",
+      "no_stations": "Keine Messstellen gefunden. Passe die Suche an."
+    },
+    "abort": {
+      "already_configured": "NIWIS ist bereits eingerichtet. Nutze die Optionen, um weitere Messstellen hinzuzufügen."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "NIWIS-Optionen",
+        "menu_options": {
+          "settings": "Aktualisierungsintervall & Klassifikation",
+          "add_radius": "Messstellen im Umkreis hinzufügen",
+          "add_query": "Messstellen nach Name/ID hinzufügen"
+        }
+      },
+      "settings": {
+        "title": "Einstellungen",
+        "data": {
+          "scan_interval": "Aktualisierungsintervall (Stunden)",
+          "klassifikationsart": "Klassifikationsart"
+        }
+      },
+      "add_radius": {
+        "title": "Messstellen im Umkreis hinzufügen",
+        "data": {
+          "radius": "Radius (km)"
+        }
+      },
+      "add_query": {
+        "title": "Messstellen nach Name/ID hinzufügen",
+        "data": {
+          "query": "Name oder Stations-ID"
+        }
+      },
+      "add_select": {
+        "title": "Messstellen auswählen",
+        "data": {
+          "stations": "Messstellen"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Verbindung zur NIWIS-API fehlgeschlagen.",
+      "no_stations": "Keine Messstellen gefunden. Passe die Suche an."
+    },
+    "abort": {
+      "no_new_stations": "Alle gefundenen Messstellen sind bereits eingerichtet."
+    }
+  }
+}

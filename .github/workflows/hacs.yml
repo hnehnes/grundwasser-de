@@ -17,3 +17,6 @@ jobs:
         uses: hacs/action@main
         with:
           category: integration
+          # 'brands' wird ignoriert, bis das Icon unter home-assistant/brands
+          # für die Domain 'niwis' eingereicht ist (nur für Default-Store nötig).
+          ignore: brands

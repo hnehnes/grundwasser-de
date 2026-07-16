@@ -15,6 +15,22 @@ integration stays stable.
 
 from __future__ import annotations
 
-from .base import Provider, ProviderReading, ProviderStation
+from .base import (
+    Provider,
+    ProviderCapabilityError,
+    ProviderError,
+    ProviderReading,
+    ProviderStation,
+)
+from .lfu_bb import LfuBbProvider
+from .niwis import NiwisProvider
 
-__all__ = ["Provider", "ProviderReading", "ProviderStation"]
+__all__ = [
+    "LfuBbProvider",
+    "NiwisProvider",
+    "Provider",
+    "ProviderCapabilityError",
+    "ProviderError",
+    "ProviderReading",
+    "ProviderStation",
+]

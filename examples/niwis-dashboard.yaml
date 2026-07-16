@@ -1,19 +1,21 @@
 # Beispiel-Dashboard für die NIWIS-Integration
 # ---------------------------------------------
-# Kopiere diesen Inhalt in ein neues Dashboard:
+# Einbinden:
 #   Einstellungen → Dashboards → Dashboard hinzufügen → (leer) → oben rechts ⋮
-#   → "Raw-Konfigurationseditor" → Inhalt einfügen.
+#   → "Raw-Konfigurationseditor" → diesen Inhalt einfügen.
 #
-# WICHTIG: Die entity_ids hängen vom Namen deiner Messstelle ab. Ersetze die
-# Beispiel-Stationen unten durch deine eigenen. Das Schema ist:
-#   sensor.<geraetename>_<messgroesse>
-#   sensor.<geraetename>_niedrigwasserklasse_<messgroesse>
-#   sensor.<geraetename>_trend_<messgroesse>
-# Beispiel Gerät "Woltersdorf OP (Rüdersdorfer)":
+# WICHTIG – entity_ids anpassen:
+# Die IDs ergeben sich aus dem (sprechenden) Gerätenamen deiner Messstelle:
+#   sensor.<geraet>_<messgroesse>                     (aktueller Wert)
+#   sensor.<geraet>_niedrigwasserklasse_<messgroesse> (Niedrigwasserklasse, Text)
+#   sensor.<geraet>_trend_<messgroesse>               (Trend)
+# Beispiel Gerät "Woltersdorf OP (Rüdersdorfer)", Messgröße Wasserstand:
 #   sensor.woltersdorf_op_rudersdorfer_wasserstand
 #   sensor.woltersdorf_op_rudersdorfer_niedrigwasserklasse_wasserstand
-#   sensor.woltersdorf_op_rudersdorfer_trend_wasserstand
-# Die genauen IDs findest du unter Einstellungen → Geräte & Dienste → NIWIS.
+# Die exakten IDs findest du unter Einstellungen → Geräte & Dienste → NIWIS.
+#
+# Ersetze die Beispiel-Stationen unten durch deine eigenen und dupliziere die
+# beiden Kacheln (Wert + Klasse) je Messstelle.
 
 title: NIWIS Niedrigwasser
 views:
@@ -21,7 +23,16 @@ views:
     path: niwis
     type: sections
     icon: mdi:waves-arrow-down
-    max_columns: 3
+    max_columns: 2
+    header:
+      layout: center
+      card:
+        type: markdown
+        content: >
+          ## 🌊 NIWIS – Niedrigwasser
+
+          Aktuelle Messwerte und Niedrigwasserklasse (Bezug 1991–2020).
+          Quelle: Bundesanstalt für Gewässerkunde (BfG) · niwis-online.de
     sections:
       # ---------------- Grundwasser ----------------
       - type: grid
@@ -29,20 +40,21 @@ views:
           - type: heading
             heading: Grundwasser
             icon: mdi:water-well
-
           - type: tile
             entity: sensor.niederschonhausen_pankow_grundwasserstand
-            name: Grundwasserstand
-            grid_options: { columns: 6 }
+            name: Niederschönhausen (Pankow)
+            color: brown
+            vertical: false
+            features_position: inline
             features:
               - type: trend-graph
                 hours_to_show: 168
+            grid_options: { columns: 8 }
           - type: tile
             entity: sensor.niederschonhausen_pankow_niedrigwasserklasse_grundwasserstand
-            name: Niedrigwasserklasse
-            color: accent
-            grid_options: { columns: 6 }
-
+            name: Klasse
+            icon: mdi:alert-outline
+            grid_options: { columns: 4 }
           - type: history-graph
             title: Grundwasserstand – Verlauf 7 Tage
             hours_to_show: 168
@@ -55,22 +67,23 @@ views:
       - type: grid
         cards:
           - type: heading
-            heading: Oberflächenwasser (Wasserstand / Abfluss)
+            heading: Wasserstand
             icon: mdi:waves
-
           - type: tile
             entity: sensor.woltersdorf_op_rudersdorfer_wasserstand
-            name: Wasserstand
-            grid_options: { columns: 6 }
+            name: Woltersdorf OP
+            color: blue
+            vertical: false
+            features_position: inline
             features:
               - type: trend-graph
                 hours_to_show: 168
+            grid_options: { columns: 8 }
           - type: tile
             entity: sensor.woltersdorf_op_rudersdorfer_niedrigwasserklasse_wasserstand
-            name: Niedrigwasserklasse
-            color: accent
-            grid_options: { columns: 6 }
-
+            name: Klasse
+            icon: mdi:alert-outline
+            grid_options: { columns: 4 }
           - type: history-graph
             title: Wasserstand – Verlauf 7 Tage
             hours_to_show: 168
@@ -79,12 +92,33 @@ views:
               - entity: sensor.woltersdorf_op_rudersdorfer_wasserstand
                 name: Woltersdorf OP (Rüdersdorfer)
 
-          # Langzeit-Trend (nutzt HA-Langzeitstatistik der Messwert-Sensoren)
+      # ---------------- Abfluss --------------------
+      - type: grid
+        cards:
+          - type: heading
+            heading: Abfluss
+            icon: mdi:water-outline
+          - type: tile
+            entity: sensor.hohenbinde_spree_muggelspree_abfluss
+            name: Hohenbinde
+            color: cyan
+            vertical: false
+            features_position: inline
+            features:
+              - type: trend-graph
+                hours_to_show: 168
+            grid_options: { columns: 8 }
+          - type: tile
+            entity: sensor.hohenbinde_spree_muggelspree_niedrigwasserklasse_abfluss
+            name: Klasse
+            icon: mdi:alert-outline
+            grid_options: { columns: 4 }
+          # Langzeit-Statistik (nutzt HA-Langzeitstatistik der Messwert-Sensoren)
           - type: statistics-graph
-            title: Wasserstand – 30-Tage-Statistik
+            title: Abfluss – 30-Tage-Statistik
             days_to_show: 30
             period: day
             stat_types: [mean, min, max]
             grid_options: { columns: full, rows: 4 }
             entities:
-              - sensor.woltersdorf_op_rudersdorfer_wasserstand
+              - sensor.hohenbinde_spree_muggelspree_abfluss

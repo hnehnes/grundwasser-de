@@ -18,14 +18,17 @@ Chain used here (MKZ → time series):
    ``…_messreihen.csv`` holds the series (UTF-8 BOM, ``;``-separated, German
    decimal comma, ``dd.MM.yyyy`` dates).
 
-Note: the APW ``nummer`` does not always equal the LfU shapefile ``MKZ`` (e.g.
-Münchehofe/Hoppegarten is shapefile ``35480874`` but APW ``35480875``), so a
-radius search cannot naively join the two. Radius search is therefore not yet
-implemented here — see :meth:`LfuBbProvider.async_search_radius`.
+The radius search uses a bundled station list (MKZ + WGS84 coordinates) derived
+offline from the LfU shapefile ``gw_basis_mn.zip`` — the APW station list carries
+no coordinates. Fetch then resolves the APW ``msid`` from the MKZ on demand. Note
+the APW ``nummer`` does not always equal the shapefile ``MKZ`` (e.g. Münchehofe is
+shapefile ``35480874`` but APW ``35480875``, and the latter is a water-quality
+well without a level series), so some nearby stations have no fetchable level.
 """
 
 from __future__ import annotations
 
+import asyncio
 import csv
 import io
 import json
@@ -33,13 +36,15 @@ import logging
 import re
 import zipfile
 from datetime import UTC, datetime, timedelta
+from functools import lru_cache
+from pathlib import Path
 from typing import Any
 
 from aiohttp import ClientError, ClientSession
 
+from ..api import haversine_km
 from .base import (
     Provider,
-    ProviderCapabilityError,
     ProviderError,
     ProviderReading,
     ProviderStation,
@@ -94,6 +99,19 @@ _USER_AGENT = (
 _MSID_RE = re.compile(r"id_messstelle=(\d+)")
 _STATION_RE = re.compile(r"Messstelle:\s*<b>\s*([^,<]+?)\s*,\s*([^<]+?)\s*</b>")
 _WCF_DATE_RE = re.compile(r"/Date\((-?\d+)\)/")
+
+#: Bundled station master data (MKZ, name, WGS84 lat/lon) derived offline from
+#: the LfU shapefile ``gw_basis_mn.zip`` (EPSG:25833 → WGS84). Shipping it avoids
+#: a runtime shapefile download and heavy pyshp/pyproj dependencies. It is the
+#: coordinate source for the radius search; the APW station list carries none.
+_STATIONS_FILE = Path(__file__).with_name("lfu_bb_stations.json")
+
+
+@lru_cache(maxsize=1)
+def _load_stations() -> list[dict[str, Any]]:
+    """Load and cache the bundled LfU station list (blocking file read)."""
+    with _STATIONS_FILE.open(encoding="utf-8") as handle:
+        return json.load(handle)
 
 
 # --------------------------------------------------------------------------- #
@@ -217,17 +235,33 @@ class LfuBbProvider(Provider):
     async def async_search_radius(
         self, latitude: float, longitude: float, radius_km: float
     ) -> list[ProviderStation]:
-        """Not yet supported: the APW station list carries no coordinates.
+        """Return stations within ``radius_km``, nearest first.
 
-        The attribute query returns MKZ/name/msid but no geometry, and the
-        ``nummer`` does not reliably equal the LfU shapefile ``MKZ``. A radius
-        search needs coordinates from the shapefile (``gw_basis_mn.zip``,
-        EPSG:25833) joined by proximity — a follow-up step.
+        Coordinates come from the bundled LfU station list; the internal APW
+        ``msid`` is resolved lazily on :meth:`async_fetch` (resolving it here
+        would mean one APW query per station).
         """
-        raise ProviderCapabilityError(
-            "lfu_bb radius search requires the LfU shapefile as a coordinate "
-            "source; not implemented yet (see docs/research/apw-brandenburg.md)."
+        stations = await asyncio.get_running_loop().run_in_executor(
+            None, _load_stations
         )
+        matches: list[ProviderStation] = []
+        for station in stations:
+            distance = haversine_km(
+                latitude, longitude, station["lat"], station["lon"]
+            )
+            if distance <= radius_km:
+                matches.append(
+                    ProviderStation(
+                        provider=DOMAIN,
+                        station_id=station["mkz"],
+                        name=station["name"] or station["mkz"],
+                        latitude=station["lat"],
+                        longitude=station["lon"],
+                        distance_km=distance,
+                    )
+                )
+        matches.sort(key=lambda s: s.distance_km or 0.0)
+        return matches
 
     async def async_search_query(self, query: str) -> list[ProviderStation]:
         """Find stations whose Messstellenkennzahl (``nummer``) matches ``query``.
@@ -258,7 +292,11 @@ class LfuBbProvider(Provider):
             station.station_id
         )
         if msid is None:
-            raise ProviderError(f"no APW station for MKZ {station.station_id}")
+            # In the shapefile but not queryable in APW's level theme (e.g. a
+            # level-only well absent from the "Menge" layer) -> unknown, not a
+            # hard error, so a multi-station poll stays healthy.
+            _LOGGER.debug("no APW level station for MKZ %s", station.station_id)
+            return ProviderReading(value=None, unit=UNIT_NHN, attribution=ATTRIBUTION)
         parameter_id = station.extra.get("parameter_id")
         if parameter_id is None:
             choice = await self._post(

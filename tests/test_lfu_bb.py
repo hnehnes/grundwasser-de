@@ -19,7 +19,6 @@ from pathlib import Path
 import pytest
 
 from custom_components.niwis.providers.base import (
-    ProviderCapabilityError,
     ProviderError,
     ProviderStation,
 )
@@ -155,9 +154,16 @@ class _FakeResponse:
 class _FakeSession:
     """Serves the APW chain: landing GET, AjaxPro POSTs, export ZIP download."""
 
-    def __init__(self, zip_bytes: bytes, *, empty_zeitraum: bool = False) -> None:
+    def __init__(
+        self,
+        zip_bytes: bytes,
+        *,
+        empty_zeitraum: bool = False,
+        empty_query: bool = False,
+    ) -> None:
         self._zip = zip_bytes
         self._empty_zeitraum = empty_zeitraum
+        self._empty_query = empty_query
         self.calls: list[str] = []
 
     def get(self, url: str, **_: object) -> _FakeResponse:
@@ -170,6 +176,8 @@ class _FakeSession:
         method = headers["X-AjaxPro-Method"]
         self.calls.append(f"POST {method}")
         if method == "AxExecuteQuery":
+            if self._empty_query:
+                return _FakeResponse(text=json.dumps({"value": {}}))
             return _FakeResponse(text=_load("axexecutequery_25500006.json"))
         if method == "AxGetAvailableParameterChoice":
             return _FakeResponse(text=_load("axparameterchoice_8449.json"))
@@ -237,7 +245,10 @@ async def test_async_fetch_empty_series_returns_unknown() -> None:
     session = _FakeSession(_export_zip(), empty_zeitraum=True)
     provider = LfuBbProvider(session)  # type: ignore[arg-type]
     station = ProviderStation(
-        provider="lfu_bb", station_id="35480875", name="Münchehofe", extra={"msid": 17416}
+        provider="lfu_bb",
+        station_id="35480875",
+        name="Münchehofe",
+        extra={"msid": 17416},
     )
     reading = await provider.async_fetch(station)
     assert reading.value is None
@@ -245,8 +256,37 @@ async def test_async_fetch_empty_series_returns_unknown() -> None:
     assert "POST AxExport" not in session.calls  # short-circuited
 
 
-async def test_radius_search_not_supported() -> None:
-    """Radius search is intentionally unavailable until the shapefile join."""
+async def test_async_fetch_unknown_mkz_is_graceful() -> None:
+    """A station absent from APW's level theme yields value None, no crash."""
+    session = _FakeSession(_export_zip(), empty_query=True)
+    provider = LfuBbProvider(session)  # type: ignore[arg-type]
+    station = ProviderStation(
+        provider="lfu_bb", station_id="35480874", name="Münchehofe, Hoppegarten"
+    )
+    reading = await provider.async_fetch(station)
+    assert reading.value is None
+    assert reading.history == []
+    assert reading.unit == "m"
+
+
+async def test_search_radius_from_bundled_stations() -> None:
+    """Radius search finds nearby stations (from the bundled coordinate list)."""
     provider = LfuBbProvider(_FakeSession(b""))  # type: ignore[arg-type]
-    with pytest.raises(ProviderCapabilityError):
-        await provider.async_search_radius(52.5, 13.6, 25)
+    # Around Grimme (53.4225 / 14.1447): it must be the nearest hit.
+    stations = await provider.async_search_radius(53.4225, 14.1447, 20)
+    assert stations
+    assert stations[0].station_id == "25500006"
+    assert stations[0].name == "Grimme"
+    assert stations[0].distance_km is not None and stations[0].distance_km < 1
+    assert stations[0].latitude == 53.4225
+    # sorted nearest-first
+    assert all(
+        (a.distance_km or 0) <= (b.distance_km or 0)
+        for a, b in zip(stations, stations[1:], strict=False)
+    )
+
+
+async def test_search_radius_empty_when_far() -> None:
+    """A location far from Brandenburg yields no stations."""
+    provider = LfuBbProvider(_FakeSession(b""))  # type: ignore[arg-type]
+    assert await provider.async_search_radius(48.0, 11.5, 10) == []

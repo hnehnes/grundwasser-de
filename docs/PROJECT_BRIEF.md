@@ -8,7 +8,7 @@ Stand: 2026-07-16. Dieser Brief fasst den aktuellen Stand zusammen, damit ein
 
 ## 1. Was existiert (NIWIS-Integration – fertig, v1.0.2)
 
-- **Repo:** dieses Repo (lokal ausgecheckt) → GitHub `github.com/hnehnes/niwis` (public).
+- **Repo:** dieses Repo (lokal ausgecheckt) → GitHub `github.com/hnehnes/grundwasser-de` (public).
   Releases v1.0.0 / v1.0.1 / v1.0.2. CI (hassfest, HACS, pytest/ruff) grün.
 - **Installiert & läuft** in der HA-Instanz des Nutzers (via HACS Custom Repository).
 - **HA-Zugang:** Home-Assistant-MCP-Server `home-assistant` (ha-mcp, stdio via uvx) ist
@@ -35,7 +35,7 @@ Stand: 2026-07-16. Dieser Brief fasst den aktuellen Stand zusammen, damit ein
 ### Offene NIWIS-Restpunkte (klein)
 1. **brands-PR**: Icon/Logo liegen in `brands/custom_integrations/niwis/` → PR bei
    `home-assistant/brands` (nötig für HACS-Default + Icon-Anzeige).
-2. **HACS-Default-PR**: `hnehnes/niwis` bei `hacs/default` eintragen (dann in HACS
+2. **HACS-Default-PR**: `hnehnes/grundwasser-de` bei `hacs/default` eintragen (dann in HACS
    suchbar). Voraussetzungen erfüllt.
 3. **Repo-Beispiel-Dashboard** `examples/niwis-dashboard.yaml` auf das finale
    Tabellen-Layout bringen (aktuell Kachel-Variante).
@@ -81,11 +81,15 @@ Provider:
   Nächste zu Hoppegarten: **„Münchehofe, Hoppegarten" MKZ 35480874, 3,8 km, täglich**
   (vs. NIWIS Niederschönhausen 17 km). Parsing-Snippet: pyshp + pyproj (siehe unten).
 - **Zeitreihen/aktuelle Werte:** Auskunftsplattform `https://apw.brandenburg.de/?th=ZR_GW_ME`
-  — ist ein **cardoMap3-GIS** (IDU), Daten über proprietären Connector
-  `https://apw.brandenburg.de/webmap.ashx?...&connectorTypeName=...MapControlConnector`.
-  **Noch NICHT ausgegraben** — erster Schritt im neuen Chat: die XHR-Calls der APW-Karte
-  (Diagramm/ZR_GW_ME) auslesen und den Zeitreihen-Endpoint pro MKZ finden (analog zum
-  NIWIS-Vorgehen).
+  — ist ein **cardoMap3-GIS** (IDU). **AUSGEGRABEN (2026-07-16, live verifiziert)** →
+  vollständige Protokoll-Doku + reale Beispiel-Payload in `docs/research/apw-brandenburg.md`,
+  Provider-Implementierung in `custom_components/niwis/providers/lfu_bb.py`, Fixtures/Tests in
+  `tests/fixtures/lfu_bb/` + `tests/test_lfu_bb.py`. Kurz: AjaxPro-Kette MKZ→msid
+  (`SelectionControl.AxExecuteQuery`, Layer L305, Feld `nummer`) →
+  `MultiExportControl.AxGetAvailableParameterChoice`/`AxGetZeitraum`/`AxExport(format=1)` →
+  ZIP mit CSV (m ü. NHN). **Achtung MKZ-Mismatch:** Shapefile-`MKZ` ≠ APW-`nummer`
+  (Münchehofe Shapefile 35480874 vs APW 35480875, und Letzteres ist ein Güte-Pegel *ohne*
+  Wasserstand). Der Join Shapefile↔APW ist also offen (siehe Teil B unten).
 - WFS-Versuche auf `maps.brandenburg.de/services/wfs/*` für GW-Stellen: 404 (Wasser-
   Layer existieren dort, aber kein direkter GW-Messstellen-WFS gefunden).
 
@@ -100,11 +104,23 @@ r = shapefile.Reader("gw_basis_mn")
 
 ---
 
-## 3. Empfohlener erster Schritt im neuen Chat
-1. APW-Endpoint für GW-Zeitreihen ausgraben (XHR der cardoMap-Diagramme, `webmap.ashx`
-   bzw. ein Diagramm-/Export-Endpoint pro MKZ). Eine reale Beispiel-Payload speichern.
-2. Provider-Interface + `grundwasser_de`-Gerüst definieren; `niwis` als ersten Provider
-   einhängen, `lfu_bb` als zweiten.
-3. Config-Flow mit quellenübergreifender Umkreissuche.
+## 3. Fortschritt
 
-Alles Weitere (Sensoren, Tests, HACS) analog zum bestehenden NIWIS-Repo.
+**Teil B abgeschlossen** (Branch `feat/grundwasser-de-lfu-bb`, 30 Tests grün, ruff sauber,
+live gegen NIWIS **und** APW verifiziert):
+
+1. ✅ APW-Endpoint ausgegraben + reale Payload (`docs/research/apw-brandenburg.md`, Fixtures).
+2. ✅ Provider-Interface `providers/base.py` + `providers/lfu_bb.py` (Suche + Fetch).
+3. ✅ `providers/niwis.py` – NIWIS als Provider hinter demselben Interface (inkl. Klasse/Trend).
+4. ✅ Umkreissuche `lfu_bb`: gebündelte Stationsliste `providers/lfu_bb_stations.json`
+   (2003 Stellen, offline aus dem Shapefile; keine pyshp/pyproj-Laufzeit-Deps). Stationen ohne
+   APW-Zeitreihe (MKZ-Mismatch / Güte-Pegel) liefern *unbekannt* statt Fehler.
+5. ✅ Config-Flow quellenübergreifend (alle Provider parallel, dedupliziert, nach Distanz).
+6. ✅ Coordinator/Sensoren provider-neutral; **Domain-Rename `niwis`→`grundwasser_de`** (v2.0.0).
+   Alte `niwis`-Instanz + Dashboard + Orphan-Sensoren aus der HA-Instanz entfernt.
+
+**Offene Restpunkte:**
+- Integration unter `grundwasser_de` in HA (HACS Custom Repo) neu hinzufügen + Stationen wählen.
+- Weitere Provider (Bayern GKD, Berlin, NRW ELWAS …) inkrementell.
+- `examples/niwis-dashboard.yaml` ist veraltet (alte Entities/Name) – bei Bedarf neu erstellen.
+- brands-/HACS-Default-PRs jetzt unter `grundwasser_de`.

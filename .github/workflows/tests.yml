@@ -20,6 +20,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements_test.txt
       - name: Ruff
-        run: ruff check custom_components/niwis
+        run: ruff check custom_components/grundwasser_de tests
       - name: Pytest
         run: pytest -q

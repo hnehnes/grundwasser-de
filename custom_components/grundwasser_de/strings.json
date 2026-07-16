@@ -2,7 +2,7 @@
   "config": {
     "step": {
       "user": {
-        "title": "NIWIS – Messstellen hinzufügen",
+        "title": "Grundwasser – Messstellen hinzufügen",
         "description": "Wie möchtest du Messstellen suchen?",
         "menu_options": {
           "radius": "Im Umkreis meines Standorts suchen",
@@ -11,7 +11,7 @@
       },
       "radius": {
         "title": "Umkreissuche",
-        "description": "Radius um deinen Home-Assistant-Standort.",
+        "description": "Radius um deinen Home-Assistant-Standort (alle Quellen).",
         "data": {
           "radius": "Radius (km)"
         }
@@ -31,19 +31,19 @@
       }
     },
     "error": {
-      "cannot_connect": "Verbindung zur NIWIS-API fehlgeschlagen.",
+      "cannot_connect": "Verbindung zu den Datenquellen fehlgeschlagen.",
       "no_stations": "Keine Messstellen gefunden. Passe die Suche an."
     },
     "abort": {
-      "already_configured": "NIWIS ist bereits eingerichtet. Nutze die Optionen, um weitere Messstellen hinzuzufügen."
+      "already_configured": "Grundwasser ist bereits eingerichtet. Nutze die Optionen, um weitere Messstellen hinzuzufügen."
     }
   },
   "options": {
     "step": {
       "init": {
-        "title": "NIWIS-Optionen",
+        "title": "Grundwasser-Optionen",
         "menu_options": {
-          "settings": "Aktualisierungsintervall & Klassifikation",
+          "settings": "Aktualisierungsintervall",
           "add_radius": "Messstellen im Umkreis hinzufügen",
           "add_query": "Messstellen nach Name/ID hinzufügen"
         }
@@ -51,8 +51,7 @@
       "settings": {
         "title": "Einstellungen",
         "data": {
-          "scan_interval": "Aktualisierungsintervall (Stunden)",
-          "klassifikationsart": "Klassifikationsart"
+          "scan_interval": "Aktualisierungsintervall (Stunden)"
         }
       },
       "add_radius": {
@@ -75,7 +74,7 @@
       }
     },
     "error": {
-      "cannot_connect": "Verbindung zur NIWIS-API fehlgeschlagen.",
+      "cannot_connect": "Verbindung zu den Datenquellen fehlgeschlagen.",
       "no_stations": "Keine Messstellen gefunden. Passe die Suche an."
     },
     "abort": {

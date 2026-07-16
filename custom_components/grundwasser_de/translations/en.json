@@ -2,7 +2,7 @@
   "config": {
     "step": {
       "user": {
-        "title": "NIWIS – add stations",
+        "title": "Groundwater – add stations",
         "description": "How would you like to search for stations?",
         "menu_options": {
           "radius": "Search near my location",
@@ -11,7 +11,7 @@
       },
       "radius": {
         "title": "Radius search",
-        "description": "Radius around your Home Assistant location.",
+        "description": "Radius around your Home Assistant location (all sources).",
         "data": {
           "radius": "Radius (km)"
         }
@@ -31,19 +31,19 @@
       }
     },
     "error": {
-      "cannot_connect": "Failed to connect to the NIWIS API.",
+      "cannot_connect": "Failed to connect to the data sources.",
       "no_stations": "No stations found. Adjust your search."
     },
     "abort": {
-      "already_configured": "NIWIS is already set up. Use the options to add more stations."
+      "already_configured": "Groundwater is already set up. Use the options to add more stations."
     }
   },
   "options": {
     "step": {
       "init": {
-        "title": "NIWIS options",
+        "title": "Groundwater options",
         "menu_options": {
-          "settings": "Update interval & classification",
+          "settings": "Update interval",
           "add_radius": "Add stations near location",
           "add_query": "Add stations by name/ID"
         }
@@ -51,8 +51,7 @@
       "settings": {
         "title": "Settings",
         "data": {
-          "scan_interval": "Update interval (hours)",
-          "klassifikationsart": "Classification type"
+          "scan_interval": "Update interval (hours)"
         }
       },
       "add_radius": {
@@ -75,7 +74,7 @@
       }
     },
     "error": {
-      "cannot_connect": "Failed to connect to the NIWIS API.",
+      "cannot_connect": "Failed to connect to the data sources.",
       "no_stations": "No stations found. Adjust your search."
     },
     "abort": {

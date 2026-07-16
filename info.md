@@ -1,12 +1,19 @@
-# NIWIS Niedrigwasser
+# Grundwasser (Deutschland)
 
-Bundesweite Niedrigwasserdaten der Bundesanstalt für Gewässerkunde (BfG) in
-Home Assistant – Grundwasserstand, Wasserstand, Abfluss und Quellschüttung samt
-einheitlicher **Niedrigwasserklasse** (Bezug 1991–2020).
+Grundwasserstände für Home Assistant aus **mehreren Quellen** über eine
+gemeinsame Provider-Architektur:
 
-- Messstellen per Umkreissuche oder Name/Stations-ID auswählen (Mehrfachauswahl).
-- Ein Gerät je Messstelle mit Wert-, Klassen- und Trend-Sensoren.
-- Niedrigwasserklasse als Text: *kein Niedrigwasser · niedrig · sehr niedrig · extrem niedrig*.
+- **NIWIS** (Bundesanstalt für Gewässerkunde, BfG) – bundesweit, zusätzlich mit
+  einheitlicher **Niedrigwasserklasse** (Bezug 1991–2020).
+- **LfU Brandenburg** (Auskunftsplattform Wasser) – dichtes Landesnetz mit teils
+  täglichen/wöchentlichen Messwerten.
+
+Funktionen:
+
+- **Quellenübergreifende Umkreissuche**: findet die tatsächlich nächste
+  Messstelle über alle Quellen hinweg – oder Suche per Name/Stations-ID.
+- Ein Gerät je Messstelle mit **Grundwasserstand** (m ü. NHN); NIWIS-Stationen
+  zusätzlich mit **Niedrigwasserklasse** und **Trend**.
 - Aktualisierung standardmäßig alle 3 Stunden (Fair Use).
 
-Datenquelle: [niwis-online.de](https://niwis-online.de) (BfG, Bund/Länder, DWD).
+Weitere Bundesland-Netze lassen sich als zusätzliche Provider ergänzen.

@@ -8,7 +8,7 @@ import pytest
 from pytest_homeassistant_custom_component.common import load_fixture
 from pytest_homeassistant_custom_component.test_util.aiohttp import AiohttpClientMocker
 
-from custom_components.niwis.const import MESSGROESSEN
+from custom_components.grundwasser_de.const import MESSGROESSEN
 
 pytest_plugins = "pytest_homeassistant_custom_component"
 

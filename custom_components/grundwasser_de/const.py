@@ -56,7 +56,7 @@ from __future__ import annotations
 from datetime import timedelta
 from typing import Final
 
-DOMAIN: Final = "niwis"
+DOMAIN: Final = "grundwasser_de"
 
 # --- API -------------------------------------------------------------------
 API_BASE: Final = "https://niwis-online.de/api"
@@ -172,6 +172,12 @@ CONF_RADIUS: Final = "radius"
 CONF_KLASSIFIKATIONSART: Final = "klassifikationsart"
 CONF_SCAN_INTERVAL: Final = "scan_interval"
 CONF_QUERY: Final = "query"
+
+# Provider-neutral station descriptor keys (grundwasser_de architecture).
+# A configured station is {provider, station_id, name}. ``provider`` names the
+# source (see providers/), ``station_id`` is that source's native id.
+CONF_PROVIDER: Final = "provider"
+CONF_STATION_ID: Final = "station_id"
 
 DEFAULT_RADIUS_KM: Final = 25.0
 DEFAULT_SCAN_INTERVAL_HOURS: Final = 3

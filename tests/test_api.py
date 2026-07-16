@@ -2,7 +2,11 @@
 
 from __future__ import annotations
 
-from custom_components.niwis.api import Station, build_display_name, haversine_km
+from custom_components.grundwasser_de.api import (
+    Station,
+    build_display_name,
+    haversine_km,
+)
 
 
 def test_missing_value_sentinel_becomes_none() -> None:

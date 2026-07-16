@@ -1,95 +1,93 @@
-# NIWIS – Niedrigwasser für Home Assistant
+# Grundwasser (Deutschland) für Home Assistant
 
-[![hassfest](https://github.com/hnehnes/niwis/actions/workflows/hassfest.yml/badge.svg)](https://github.com/hnehnes/niwis/actions/workflows/hassfest.yml)
-[![HACS](https://github.com/hnehnes/niwis/actions/workflows/hacs.yml/badge.svg)](https://github.com/hnehnes/niwis/actions/workflows/hacs.yml)
+[![hassfest](https://github.com/hnehnes/grundwasser-de/actions/workflows/hassfest.yml/badge.svg)](https://github.com/hnehnes/grundwasser-de/actions/workflows/hassfest.yml)
+[![HACS](https://github.com/hnehnes/grundwasser-de/actions/workflows/hacs.yml/badge.svg)](https://github.com/hnehnes/grundwasser-de/actions/workflows/hacs.yml)
 
-Home-Assistant-Integration für das **Niedrigwasserinformationssystem (NIWIS)**
-der Bundesanstalt für Gewässerkunde (BfG). NIWIS ist seit dem 15.07.2026 unter
-[niwis-online.de](https://niwis-online.de) verfügbar und bündelt bundesweit
-Grundwasserstände, Wasserstände, Abflüsse und Quellschüttungen samt einheitlicher
-**Niedrigwasserklassifikation** (Bezugszeitraum 1991–2020).
+Home-Assistant-Integration für **Grundwasserstände in Deutschland** aus mehreren
+Quellen hinter einer gemeinsamen **Provider-Architektur**. Deutschland-Grundwasser
+ist föderal organisiert – ein bundesweites, kuratiertes Netz (NIWIS/BfG) plus je
+Bundesland ein dichtes Landesnetz. Diese Integration bündelt die Quellen und bietet
+im Config-Flow die **tatsächlich nächste** Messstelle quellenübergreifend an.
+
+## Datenquellen (Provider)
+
+| Provider | Quelle | Abdeckung | Besonderheit |
+| -------- | ------ | --------- | ------------ |
+| `niwis` | Niedrigwasserinformationssystem der BfG – [niwis-online.de](https://niwis-online.de) | bundesweit | zusätzlich **Niedrigwasserklasse** + Trend (Bezug 1991–2020) |
+| `lfu_bb` | LfU Brandenburg, Auskunftsplattform Wasser – [apw.brandenburg.de](https://apw.brandenburg.de) | Brandenburg (~2000 Stellen) | teils tägliche/wöchentliche Werte, m ü. NHN |
+
+Weitere Landesnetze (Bayern GKD, Berlin, NRW ELWAS …) lassen sich als zusätzliche
+Provider unter `custom_components/grundwasser_de/providers/` ergänzen; das Interface
+ist in [`providers/base.py`](custom_components/grundwasser_de/providers/base.py)
+dokumentiert.
 
 ## Funktionsumfang
 
-Pro ausgewählter Messstelle wird ein Gerät angelegt, mit – je nach Messgröße –
-diesen Sensoren:
+Pro ausgewählter Messstelle wird ein **Gerät** angelegt, mit diesen Sensoren:
 
-| Sensor | Beispiel-State | Einheit |
-| ------ | -------------- | ------- |
-| Grundwasserstand / Wasserstand / Abfluss / Quellschüttung | `37.0` | m · cm · m³/s · L/s |
-| Niedrigwasserklasse | `extrem niedrig` | ENUM-Text |
-| Trend | `gleichbleibend` | ENUM-Text |
+| Sensor | Beispiel-State | Einheit | Quellen |
+| ------ | -------------- | ------- | ------- |
+| Grundwasserstand | `42.0` | m (ü. NHN) | alle |
+| Niedrigwasserklasse | `sehr niedrig` | ENUM-Text | nur NIWIS |
+| Trend | `gleichbleibend` | ENUM-Text | nur NIWIS |
 
-Die Niedrigwasserklasse ist ein reiner Text-Sensor (ENUM) mit den Zuständen
+Die Niedrigwasserklasse ist ein Text-Sensor (ENUM) mit den Zuständen
 **kein Niedrigwasser · niedrig · sehr niedrig · extrem niedrig · keine Daten**.
+Die Quelle steht als **Hersteller** am Gerät, die Stations-ID als **Seriennummer**.
 
 ## Installation
 
 ### HACS (empfohlen)
 
 1. HACS öffnen → *Integrationen* → Menü → **Benutzerdefinierte Repositories**.
-2. `https://github.com/hnehnes/niwis` als Kategorie *Integration* hinzufügen.
-3. „NIWIS Niedrigwasser“ installieren und Home Assistant neu starten.
+2. `https://github.com/hnehnes/grundwasser-de` als Kategorie *Integration* hinzufügen.
+3. „Grundwasser (Deutschland)" installieren und Home Assistant neu starten.
 
 ### Manuell
 
-Den Ordner `custom_components/niwis` nach `<config>/custom_components/niwis`
-kopieren und Home Assistant neu starten.
+Den Ordner `custom_components/grundwasser_de` nach
+`<config>/custom_components/grundwasser_de` kopieren und Home Assistant neu starten.
 
 ## Einrichtung
 
-1. *Einstellungen → Geräte & Dienste → Integration hinzufügen → **NIWIS***.
+1. *Einstellungen → Geräte & Dienste → Integration hinzufügen → **Grundwasser (Deutschland)***.
 2. Suche wählen:
-   - **Umkreis** um den Home-Assistant-Standort (Radius konfigurierbar), oder
+   - **Umkreis** um den Home-Assistant-Standort (Radius konfigurierbar) – sucht über
+     **alle** Provider und sortiert nach Entfernung, oder
    - **Name/Stations-ID**.
-3. Eine oder mehrere Messstellen aus der Liste auswählen – fertig.
+3. Eine oder mehrere Messstellen aus der quellenübergreifenden Liste auswählen.
 
 ### Optionen
 
 Über *Konfigurieren* am Eintrag:
 
-- **Aktualisierungsintervall** (Standard 3 h, Minimum 1 h – Fair Use gegenüber der BfG-API).
-- **Klassifikationsart** (`DYNAMISCH` – App-Standard – oder `STATISCH`).
+- **Aktualisierungsintervall** (Standard 3 h, Minimum 1 h – Fair Use gegenüber den APIs).
 - **Weitere Messstellen** per Umkreis- oder Namenssuche nachrüsten.
 
-## Geräte, Namen & Gruppierung
+## Hinweise zur Datenlage
 
-- Je **Messstelle** wird ein **Gerät** angelegt. Der Gerätename ist sprechend und
-  stammt aus den NIWIS-Stammdaten: **Ortslage** bei Grundwasser (z. B.
-  „Niederschönhausen (Pankow)"), **Name + Gewässer** bei Oberflächenwasser
-  (z. B. „Woltersdorf OP (Rüdersdorfer)"). Die technische Stations-ID steht als
-  **Seriennummer** am Gerät.
-- Die **Messgröße** (Grundwasserstand / Wasserstand / Abfluss / Quellschüttung)
-  steht als Geräte-**Modell** und ist über die passende `device_class` typisiert –
-  eine separate „Kategorie" ist in HA dafür nicht nötig (`entity_category` würde
-  die Sensoren fälschlich als *Diagnose* einstufen und ausblenden). Zum Sortieren
-  eignen sich **HA-Labels** oder die Gruppierung im **Dashboard** (siehe unten).
-
-## Beispiel-Dashboard
-
-Ein fertiges Beispiel mit Verlaufs-/Statistik-Graphen liegt unter
-[`examples/niwis-dashboard.yaml`](examples/niwis-dashboard.yaml) – Sektionen je
-Messgröße, aktueller Wert, Niedrigwasserklasse und History-Graph. Einfach den
-Raw-Konfigurationseditor eines neuen Dashboards damit füllen und die entity_ids
-an deine Messstellen anpassen.
+- Nicht jede Messstelle liefert jede Größe: manche Brunnen sind reine **Güte**-Pegel
+  ohne Grundwasserstand – deren Wert-Sensor bleibt dann *unbekannt*.
+- Die Kennziffern der LfU (Shapefile-`MKZ`) decken sich nicht immer 1:1 mit den
+  Kennziffern der Auskunftsplattform; Stationen ohne dort abrufbare Zeitreihe
+  liefern *unbekannt* statt eines Fehlers.
 
 ## Datenquelle & Attribution
 
-Datenbasis: **Niedrigwasserinformationssystem NIWIS** der Bundesanstalt für
-Gewässerkunde (BfG), Bund/Länder und DWD – [niwis-online.de](https://niwis-online.de).
-Bitte die jeweils geltenden Nutzungs-/Datenlizenzbedingungen der BfG beachten.
-Diese Integration steht in keiner Verbindung zur BfG und wird nicht von ihr unterstützt.
+- **NIWIS**: Bundesanstalt für Gewässerkunde (BfG), Bund/Länder und DWD –
+  [niwis-online.de](https://niwis-online.de).
+- **LfU Brandenburg**: Landesamt für Umwelt, Auskunftsplattform Wasser –
+  [apw.brandenburg.de](https://apw.brandenburg.de), Datenlizenz **dl-de/by-2-0**.
+
+Bitte die jeweils geltenden Nutzungs-/Lizenzbedingungen der Betreiber beachten.
+Diese Integration steht in keiner Verbindung zu BfG oder LfU und wird nicht von
+ihnen unterstützt. Das reverse-engineerte APW-Protokoll ist in
+[`docs/research/apw-brandenburg.md`](docs/research/apw-brandenburg.md) dokumentiert.
 
 ## Logo / brands
 
-Fertige Icon-/Logo-Dateien liegen unter
-[`brands/custom_integrations/niwis/`](brands/custom_integrations/niwis/)
-(`icon.png` 256×256, `icon@2x.png` 512×512, `logo.png`, `logo@2x.png`). Für die
-Anzeige in Home Assistant und HACS die Dateien per PR bei
+Icon-/Logo-Dateien liegen unter
+[`brands/custom_integrations/grundwasser_de/`](brands/custom_integrations/grundwasser_de/).
+Für die Anzeige in Home Assistant und HACS die Dateien per PR bei
 [home-assistant/brands](https://github.com/home-assistant/brands) unter
-`custom_integrations/niwis/` einreichen.
-
-## Hinweise
-
-- Vor der Aufnahme in den HACS-Default-Store das Repository öffentlich machen und
-  einmalig ein Release/Tag (z. B. `v1.0.1`) erstellen.
+`custom_integrations/grundwasser_de/` einreichen.

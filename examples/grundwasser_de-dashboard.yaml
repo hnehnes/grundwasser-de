@@ -1,0 +1,96 @@
+# Beispiel-Dashboard für die Integration "Grundwasser (Deutschland)" (grundwasser_de)
+# -----------------------------------------------------------------------------------
+# Einbinden:
+#   Einstellungen → Dashboards → Dashboard hinzufügen → (leer) → oben rechts ⋮
+#   → "Raw-Konfigurationseditor" → diesen Inhalt einfügen.
+#
+# WICHTIG – entity_ids anpassen:
+# Je Messstelle legt die Integration ein Gerät an; die Sensor-IDs ergeben sich aus
+# dem Gerätenamen (= Stationsname):
+#   sensor.<geraet>_grundwasserstand      (aktueller Wert, m ü. NHN)   – alle Quellen
+#   sensor.<geraet>_niedrigwasserklasse   (Niedrigwasserklasse, Text)  – nur NIWIS
+#   sensor.<geraet>_trend                 (Trend)                      – nur NIWIS
+# Die exakten IDs stehen unter Einstellungen → Geräte & Dienste →
+# "Grundwasser (Deutschland)" → jeweiliges Gerät.
+#
+# Ersetze die Beispiel-Stationen unten durch deine eigenen. LfU-Brandenburg-Stationen
+# (Provider lfu_bb) haben nur den Wert-Sensor – bei ihnen die Klasse-/Trend-Kacheln
+# weglassen (siehe zweiter Block).
+
+title: Grundwasser
+views:
+  - title: Grundwasser
+    path: grundwasser
+    type: sections
+    icon: mdi:water-well
+    max_columns: 2
+    header:
+      layout: center
+      card:
+        type: markdown
+        content: >
+          ## 💧 Grundwasser (Deutschland)
+
+          Aktuelle Grundwasserstände (m ü. NHN) aus mehreren Quellen. NIWIS-Stationen
+          zeigen zusätzlich die Niedrigwasserklasse (Bezug 1991–2020).
+          Quellen: BfG · niwis-online.de · LfU Brandenburg · apw.brandenburg.de
+    sections:
+      # ---- NIWIS-Station (Wert + Niedrigwasserklasse + Trend) ----
+      - type: grid
+        cards:
+          - type: heading
+            heading: NIWIS-Messstelle (mit Niedrigwasserklasse)
+            icon: mdi:water-well
+          - type: tile
+            entity: sensor.nbs_h_w_kb_11_1_grundwasserstand
+            name: NBS-H/W KB 11/1
+            color: brown
+            vertical: false
+            features_position: inline
+            features:
+              - type: trend-graph
+                hours_to_show: 168
+            grid_options: { columns: 8 }
+          - type: tile
+            entity: sensor.nbs_h_w_kb_11_1_niedrigwasserklasse
+            name: Klasse
+            icon: mdi:alert-outline
+            grid_options: { columns: 4 }
+          - type: tile
+            entity: sensor.nbs_h_w_kb_11_1_trend
+            name: Trend
+            icon: mdi:trending-up
+            grid_options: { columns: 4 }
+          - type: history-graph
+            title: Grundwasserstand – Verlauf 7 Tage
+            hours_to_show: 168
+            grid_options: { columns: full, rows: 4 }
+            entities:
+              - entity: sensor.nbs_h_w_kb_11_1_grundwasserstand
+                name: NBS-H/W KB 11/1
+
+      # ---- LfU-Brandenburg-Station (nur Wert) ----
+      - type: grid
+        cards:
+          - type: heading
+            heading: LfU Brandenburg (nur Wasserstand)
+            icon: mdi:map-marker-radius
+          - type: tile
+            entity: sensor.bollensdorf_grundwasserstand
+            name: Bollensdorf
+            color: cyan
+            vertical: false
+            features_position: inline
+            features:
+              - type: trend-graph
+                hours_to_show: 168
+            grid_options: { columns: 8 }
+          # Langzeit-Statistik (nutzt HA-Langzeitstatistik des Messwert-Sensors)
+          - type: statistics-graph
+            title: Grundwasserstand – 30-Tage-Statistik
+            days_to_show: 30
+            period: day
+            stat_types: [mean, min, max]
+            grid_options: { columns: full, rows: 4 }
+            entities:
+              - sensor.bollensdorf_grundwasserstand

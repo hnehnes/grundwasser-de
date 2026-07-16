@@ -72,6 +72,14 @@ Den Ordner `custom_components/grundwasser_de` nach
   Kennziffern der Auskunftsplattform; Stationen ohne dort abrufbare Zeitreihe
   liefern *unbekannt* statt eines Fehlers.
 
+## Beispiel-Dashboard
+
+Ein fertiges Beispiel (Sektionen je Station, Wert-Kachel, Niedrigwasserklasse/Trend
+bei NIWIS, Verlaufs- und Statistik-Graph) liegt unter
+[`examples/grundwasser_de-dashboard.yaml`](examples/grundwasser_de-dashboard.yaml).
+Den Raw-Konfigurationseditor eines neuen Dashboards damit füllen und die `entity_id`s
+an deine Messstellen anpassen.
+
 ## Datenquelle & Attribution
 
 - **NIWIS**: Bundesanstalt für Gewässerkunde (BfG), Bund/Länder und DWD –

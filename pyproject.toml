@@ -10,7 +10,7 @@ ignore = ["D203", "D213"]
 "tests/*" = ["D100", "D103", "D104"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["custom_components.niwis"]
+known-first-party = ["custom_components.grundwasser_de"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -10,8 +10,8 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from pytest_homeassistant_custom_component.test_util.aiohttp import AiohttpClientMocker
 
-from custom_components.niwis.providers.base import ProviderStation
-from custom_components.niwis.providers.niwis import NiwisProvider
+from custom_components.grundwasser_de.providers.base import ProviderStation
+from custom_components.grundwasser_de.providers.niwis import NiwisProvider
 
 # Groundwater station in tests/fixtures/list_grundwasser.json.
 _GW_NUMMER = "DEGM_DEBY83614"  # "NBS-H/W KB 11/1", lat 50.2037 / lon 9.6218

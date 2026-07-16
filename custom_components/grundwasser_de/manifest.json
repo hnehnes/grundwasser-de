@@ -1,6 +1,6 @@
 {
-  "domain": "niwis",
-  "name": "NIWIS Niedrigwasser",
+  "domain": "grundwasser_de",
+  "name": "Grundwasser (Deutschland)",
   "codeowners": ["@hnehnes"],
   "config_flow": true,
   "documentation": "https://github.com/hnehnes/niwis",
@@ -8,5 +8,5 @@
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/hnehnes/niwis/issues",
   "requirements": [],
-  "version": "1.0.2"
+  "version": "2.0.0"
 }

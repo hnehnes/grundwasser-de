@@ -1,5 +1,5 @@
 {
-  "name": "NIWIS Niedrigwasser",
+  "name": "Grundwasser (Deutschland)",
   "render_readme": true,
   "homeassistant": "2024.12.0",
   "content_in_root": false

@@ -56,7 +56,7 @@ from __future__ import annotations
 from datetime import timedelta
 from typing import Final
 
-DOMAIN: Final = "niwis"
+DOMAIN: Final = "grundwasser_de"
 
 # --- API -------------------------------------------------------------------
 API_BASE: Final = "https://niwis-online.de/api"

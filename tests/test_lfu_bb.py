@@ -18,11 +18,11 @@ from pathlib import Path
 
 import pytest
 
-from custom_components.niwis.providers.base import (
+from custom_components.grundwasser_de.providers.base import (
     ProviderError,
     ProviderStation,
 )
-from custom_components.niwis.providers.lfu_bb import (
+from custom_components.grundwasser_de.providers.lfu_bb import (
     DEFAULT_NHN_PARAMETER,
     LfuBbProvider,
     extract_messreihen_from_zip,

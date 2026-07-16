@@ -66,5 +66,3 @@ Diese Integration steht in keiner Verbindung zur BfG und wird nicht von ihr unte
   Domain `niwis` anlegen.
 - Vor der Aufnahme in den HACS-Default-Store das Repository öffentlich machen und
   einmalig ein Release/Tag (z. B. `v1.0.0`) erstellen.
-
-— 🤖 Claude Opus 4.8 (via Claude Code)

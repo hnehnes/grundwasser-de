@@ -104,21 +104,23 @@ r = shapefile.Reader("gw_basis_mn")
 
 ---
 
-## 3. Fortschritt & nächste Schritte
+## 3. Fortschritt
 
-**Erledigt (Branch `feat/grundwasser-de-lfu-bb`):**
-1. ✅ APW-Endpoint für GW-Zeitreihen ausgegraben + reale Beispiel-Payload gespeichert
-   (`docs/research/apw-brandenburg.md`, Fixtures).
-2. ✅ Provider-Interface `custom_components/niwis/providers/base.py`
-   (`Provider`/`ProviderStation`/`ProviderReading`) + erster State-Provider
-   `providers/lfu_bb.py` (`async_search_query` + `async_fetch`, live verifiziert, 26 Tests grün).
+**Teil B abgeschlossen** (Branch `feat/grundwasser-de-lfu-bb`, 30 Tests grün, ruff sauber,
+live gegen NIWIS **und** APW verifiziert):
 
-**Offen (Teil B):**
-3. `niwis` (bestehendes `api.py`) auf dasselbe Provider-Interface adaptieren (`providers/niwis.py`).
-4. **Umkreissuche für `lfu_bb`** lösen (`async_search_radius` wirft aktuell
-   `ProviderCapabilityError`): die APW-Stationsliste hat keine Koordinaten → Koordinaten aus
-   dem Shapefile (`gw_basis_mn.zip`, EPSG:25833) beziehen und per Nähe an die APW-`nummer`
-   joinen. **MKZ-Mismatch** (s. o.) sauber behandeln (Fuzzy-/Koordinaten-Join statt exaktem MKZ).
-5. Config-Flow mit quellenübergreifender Umkreissuche (dedupliziert über Provider).
-6. Coordinator/Sensoren quellenneutral verdrahten; ggf. Domain-Rename `niwis`→`grundwasser_de`
-   (Migration, da installiert). Sensoren, Tests, HACS analog zum bestehenden NIWIS-Repo.
+1. ✅ APW-Endpoint ausgegraben + reale Payload (`docs/research/apw-brandenburg.md`, Fixtures).
+2. ✅ Provider-Interface `providers/base.py` + `providers/lfu_bb.py` (Suche + Fetch).
+3. ✅ `providers/niwis.py` – NIWIS als Provider hinter demselben Interface (inkl. Klasse/Trend).
+4. ✅ Umkreissuche `lfu_bb`: gebündelte Stationsliste `providers/lfu_bb_stations.json`
+   (2003 Stellen, offline aus dem Shapefile; keine pyshp/pyproj-Laufzeit-Deps). Stationen ohne
+   APW-Zeitreihe (MKZ-Mismatch / Güte-Pegel) liefern *unbekannt* statt Fehler.
+5. ✅ Config-Flow quellenübergreifend (alle Provider parallel, dedupliziert, nach Distanz).
+6. ✅ Coordinator/Sensoren provider-neutral; **Domain-Rename `niwis`→`grundwasser_de`** (v2.0.0).
+   Alte `niwis`-Instanz + Dashboard + Orphan-Sensoren aus der HA-Instanz entfernt.
+
+**Offene Restpunkte:**
+- Integration unter `grundwasser_de` in HA (HACS Custom Repo) neu hinzufügen + Stationen wählen.
+- Weitere Provider (Bayern GKD, Berlin, NRW ELWAS …) inkrementell.
+- `examples/niwis-dashboard.yaml` ist veraltet (alte Entities/Name) – bei Bedarf neu erstellen.
+- brands-/HACS-Default-PRs jetzt unter `grundwasser_de`.

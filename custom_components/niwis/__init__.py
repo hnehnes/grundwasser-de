@@ -1,27 +1,19 @@
-"""The NIWIS (Niedrigwasserinformationssystem) integration."""
+"""The groundwater integration (multi-provider: NIWIS, LfU Brandenburg, …)."""
 
 from __future__ import annotations
 
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import ConfigEntryNotReady
 
-from .api import NiwisApiError
-from .coordinator import NiwisConfigEntry, NiwisCoordinator
+from .coordinator import GwConfigEntry, GwCoordinator
 
 PLATFORMS: list[Platform] = [Platform.SENSOR]
 
 
-async def async_setup_entry(hass: HomeAssistant, entry: NiwisConfigEntry) -> bool:
-    """Set up NIWIS from a config entry."""
-    coordinator = NiwisCoordinator(hass, entry)
-    try:
-        await coordinator.async_config_entry_first_refresh()
-    except NiwisApiError as err:  # pragma: no cover - defensive
-        raise ConfigEntryNotReady(str(err)) from err
-
-    # Enrich device names with master data (best-effort, non-fatal).
-    await coordinator.async_load_metadata()
+async def async_setup_entry(hass: HomeAssistant, entry: GwConfigEntry) -> bool:
+    """Set up the integration from a config entry."""
+    coordinator = GwCoordinator(hass, entry)
+    await coordinator.async_config_entry_first_refresh()
 
     entry.runtime_data = coordinator
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
@@ -29,13 +21,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: NiwisConfigEntry) -> boo
     return True
 
 
-async def async_unload_entry(hass: HomeAssistant, entry: NiwisConfigEntry) -> bool:
+async def async_unload_entry(hass: HomeAssistant, entry: GwConfigEntry) -> bool:
     """Unload a config entry."""
     return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
 
 
-async def _async_update_listener(
-    hass: HomeAssistant, entry: NiwisConfigEntry
-) -> None:
+async def _async_update_listener(hass: HomeAssistant, entry: GwConfigEntry) -> None:
     """Reload the entry when its options change."""
     await hass.config_entries.async_reload(entry.entry_id)

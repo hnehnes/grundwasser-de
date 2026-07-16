@@ -1,4 +1,4 @@
-"""Diagnostics support for the NIWIS integration."""
+"""Diagnostics support for the groundwater integration."""
 
 from __future__ import annotations
 
@@ -6,22 +6,27 @@ from typing import Any
 
 from homeassistant.core import HomeAssistant
 
-from .coordinator import NiwisConfigEntry
+from .coordinator import GwConfigEntry
 
 
 async def async_get_config_entry_diagnostics(
-    hass: HomeAssistant, entry: NiwisConfigEntry
+    hass: HomeAssistant, entry: GwConfigEntry
 ) -> dict[str, Any]:
     """Return diagnostics for a config entry.
 
-    All NIWIS data is public; no redaction is required.
+    All data is public (NIWIS/BfG, LfU-BB); no redaction is required.
     """
     coordinator = entry.runtime_data
-    data = {
-        messgroesse: {
-            nummer: station.raw for nummer, station in stations.items()
+    readings = {
+        f"{provider}:{station_id}": {
+            "value": reading.value,
+            "unit": reading.unit,
+            "timestamp": reading.timestamp.isoformat() if reading.timestamp else None,
+            "history_points": len(reading.history),
+            "niedrigwasser_klasse": reading.niedrigwasser_klasse,
+            "entwicklung": reading.entwicklung,
         }
-        for messgroesse, stations in (coordinator.data or {}).items()
+        for (provider, station_id), reading in (coordinator.data or {}).items()
     }
     return {
         "entry": {
@@ -29,12 +34,5 @@ async def async_get_config_entry_diagnostics(
             "options": dict(entry.options),
         },
         "last_update_success": coordinator.last_update_success,
-        "needed_messgroessen": sorted(
-            {
-                mg
-                for s in entry.data.get("stations", [])
-                for mg in s.get("messgroessen", [])
-            }
-        ),
-        "data": data,
+        "readings": readings,
     }

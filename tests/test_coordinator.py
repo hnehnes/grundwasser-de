@@ -58,27 +58,28 @@ async def test_setup_and_sensor_values(
 
     assert entry.state is ConfigEntryState.LOADED
 
-    # Value sensor (Wasserstand, cm)
-    state = hass.states.get("sensor.inkofen_desm_deby16607001_wasserstand")
+    # Value sensor (Wasserstand, cm). Device name comes from Stammdaten:
+    # name "Inkofen" + gewaesser "Amper" -> "Inkofen (Amper)".
+    state = hass.states.get("sensor.inkofen_amper_wasserstand")
     assert state is not None
     assert state.state == "37.0"
     assert state.attributes["unit_of_measurement"] == "cm"
 
     # Low-water class sensor -> German text
     klasse = hass.states.get(
-        "sensor.inkofen_desm_deby16607001_niedrigwasserklasse_wasserstand"
+        "sensor.inkofen_amper_niedrigwasserklasse_wasserstand"
     )
     assert klasse is not None
     assert klasse.state == "extrem niedrig"
     assert "kein Niedrigwasser" in klasse.attributes["options"]
 
     # Trend sensor -> German text
-    trend = hass.states.get("sensor.inkofen_desm_deby16607001_trend_wasserstand")
+    trend = hass.states.get("sensor.inkofen_amper_trend_wasserstand")
     assert trend is not None
     assert trend.state == "gleichbleibend"
 
-    # Groundwater device value present too
-    gw = hass.states.get("sensor.obersinn_degm_deby83614_grundwasserstand")
+    # Groundwater device uses its Ortslage ("Obersinn") as the speaking name.
+    gw = hass.states.get("sensor.obersinn_grundwasserstand")
     assert gw is not None
     assert gw.state == "194.4"
 

@@ -10,11 +10,12 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from .api import NiwisApiClient, NiwisApiError, Station
+from .api import NiwisApiClient, NiwisApiError, Station, build_display_name
 from .const import (
     CONF_KLASSIFIKATIONSART,
     CONF_SCAN_INTERVAL,
     CONF_STATION_MESSGROESSEN,
+    CONF_STATION_NAME,
     CONF_STATION_NUMMER,
     CONF_STATIONS,
     DEFAULT_SCAN_INTERVAL_HOURS,
@@ -48,6 +49,35 @@ class NiwisCoordinator(DataUpdateCoordinator[dict[str, dict[str, Station]]]):
         self.client = NiwisApiClient(
             async_get_clientsession(hass), klassifikationsart=klass
         )
+        # Per-station master data (Stammdaten) for speaking device names,
+        # loaded once at setup: {nummer: {"name": str, "details": dict}}.
+        self.station_meta: dict[str, dict] = {}
+
+    async def async_load_metadata(self) -> None:
+        """Fetch master data for the selected stations to build device names.
+
+        Best-effort and non-fatal: a station without reachable Stammdaten
+        keeps its map name. Runs once per setup, not on every poll.
+        """
+        meta: dict[str, dict] = {}
+        for station in self.selected_stations:
+            nummer = station[CONF_STATION_NUMMER]
+            messgroessen = station.get(CONF_STATION_MESSGROESSEN, [])
+            fallback = station.get(CONF_STATION_NAME, nummer)
+            details: dict = {}
+            if messgroessen:
+                details = await self.client.async_get_station_details(
+                    messgroessen[0], nummer
+                )
+            meta[nummer] = {
+                "name": build_display_name(details, fallback, messgroessen),
+                "details": details,
+            }
+        self.station_meta = meta
+
+    def station_name(self, nummer: str, fallback: str) -> str:
+        """Return the speaking name for a station, or the fallback."""
+        return self.station_meta.get(nummer, {}).get("name") or fallback
 
     @property
     def _needed_messgroessen(self) -> list[str]:

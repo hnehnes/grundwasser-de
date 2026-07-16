@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2E86C1"/>
+      <stop offset="1" stop-color="#0B3D6B"/>
+    </linearGradient>
+    <linearGradient id="water" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#EAF6FF"/>
+      <stop offset="1" stop-color="#BFE3FB"/>
+    </linearGradient>
+    <clipPath id="round"><rect x="0" y="0" width="256" height="256" rx="56"/></clipPath>
+  </defs>
+  <g clip-path="url(#round)">
+    <rect x="0" y="0" width="256" height="256" fill="url(#bg)"/>
+    <line x1="28" y1="104" x2="228" y2="104" stroke="#FFFFFF" stroke-opacity="0.72"
+          stroke-width="8" stroke-dasharray="20 15" stroke-linecap="round"/>
+    <g stroke="#FFFFFF" stroke-opacity="0.92" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none">
+      <line x1="128" y1="116" x2="128" y2="156"/>
+      <polyline points="110,142 128,162 146,142"/>
+    </g>
+    <path fill="url(#water)" d="M0,188 C 40,168 72,168 112,188 C 152,208 184,208 224,188 C 240,180 256,184 256,184 L 256,256 L 0,256 Z"/>
+    <path fill="#FFFFFF" fill-opacity="0.35" d="M0,206 C 40,188 72,188 112,206 C 152,224 184,224 224,206 C 240,198 256,202 256,202 L 256,256 L 0,256 Z"/>
+  </g>
+</svg>

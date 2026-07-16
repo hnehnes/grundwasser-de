@@ -1,0 +1,90 @@
+# Beispiel-Dashboard für die NIWIS-Integration
+# ---------------------------------------------
+# Kopiere diesen Inhalt in ein neues Dashboard:
+#   Einstellungen → Dashboards → Dashboard hinzufügen → (leer) → oben rechts ⋮
+#   → "Raw-Konfigurationseditor" → Inhalt einfügen.
+#
+# WICHTIG: Die entity_ids hängen vom Namen deiner Messstelle ab. Ersetze die
+# Beispiel-Stationen unten durch deine eigenen. Das Schema ist:
+#   sensor.<geraetename>_<messgroesse>
+#   sensor.<geraetename>_niedrigwasserklasse_<messgroesse>
+#   sensor.<geraetename>_trend_<messgroesse>
+# Beispiel Gerät "Woltersdorf OP (Rüdersdorfer)":
+#   sensor.woltersdorf_op_rudersdorfer_wasserstand
+#   sensor.woltersdorf_op_rudersdorfer_niedrigwasserklasse_wasserstand
+#   sensor.woltersdorf_op_rudersdorfer_trend_wasserstand
+# Die genauen IDs findest du unter Einstellungen → Geräte & Dienste → NIWIS.
+
+title: NIWIS Niedrigwasser
+views:
+  - title: Niedrigwasser
+    path: niwis
+    type: sections
+    icon: mdi:waves-arrow-down
+    max_columns: 3
+    sections:
+      # ---------------- Grundwasser ----------------
+      - type: grid
+        cards:
+          - type: heading
+            heading: Grundwasser
+            icon: mdi:water-well
+
+          - type: tile
+            entity: sensor.niederschonhausen_pankow_grundwasserstand
+            name: Grundwasserstand
+            grid_options: { columns: 6 }
+            features:
+              - type: trend-graph
+                hours_to_show: 168
+          - type: tile
+            entity: sensor.niederschonhausen_pankow_niedrigwasserklasse_grundwasserstand
+            name: Niedrigwasserklasse
+            color: accent
+            grid_options: { columns: 6 }
+
+          - type: history-graph
+            title: Grundwasserstand – Verlauf 7 Tage
+            hours_to_show: 168
+            grid_options: { columns: full, rows: 4 }
+            entities:
+              - entity: sensor.niederschonhausen_pankow_grundwasserstand
+                name: Niederschönhausen (Pankow)
+
+      # ------------- Oberflächenwasser -------------
+      - type: grid
+        cards:
+          - type: heading
+            heading: Oberflächenwasser (Wasserstand / Abfluss)
+            icon: mdi:waves
+
+          - type: tile
+            entity: sensor.woltersdorf_op_rudersdorfer_wasserstand
+            name: Wasserstand
+            grid_options: { columns: 6 }
+            features:
+              - type: trend-graph
+                hours_to_show: 168
+          - type: tile
+            entity: sensor.woltersdorf_op_rudersdorfer_niedrigwasserklasse_wasserstand
+            name: Niedrigwasserklasse
+            color: accent
+            grid_options: { columns: 6 }
+
+          - type: history-graph
+            title: Wasserstand – Verlauf 7 Tage
+            hours_to_show: 168
+            grid_options: { columns: full, rows: 4 }
+            entities:
+              - entity: sensor.woltersdorf_op_rudersdorfer_wasserstand
+                name: Woltersdorf OP (Rüdersdorfer)
+
+          # Langzeit-Trend (nutzt HA-Langzeitstatistik der Messwert-Sensoren)
+          - type: statistics-graph
+            title: Wasserstand – 30-Tage-Statistik
+            days_to_show: 30
+            period: day
+            stat_types: [mean, min, max]
+            grid_options: { columns: full, rows: 4 }
+            entities:
+              - sensor.woltersdorf_op_rudersdorfer_wasserstand

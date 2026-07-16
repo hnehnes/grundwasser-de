@@ -83,6 +83,32 @@ def haversine_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
     return 2 * r * asin(sqrt(a))
 
 
+def build_display_name(
+    details: dict[str, Any], fallback: str, messgroessen: list[str]
+) -> str:
+    """Build a human-friendly station name from its master data (Stammdaten).
+
+    * Groundwater / spring stations often carry only a bare number as their
+      map label, so the location (``ortslage``) is far more descriptive.
+    * Surface-water stations get their gauge name plus the water body
+      (``gewaesser``), e.g. ``"Woltersdorf OP (Rüdersdorfer)"``.
+
+    Falls back to the map name if the master data lacks the relevant fields.
+    """
+    ortslage = (details.get("ortslage") or "").strip()
+    gewaesser = (details.get("gewaesser") or "").strip()
+    base = (details.get("name") or fallback or "").strip()
+    is_groundwater = any(
+        mg in ("GRUNDWASSER", "QUELLSCHUETTUNG") for mg in messgroessen
+    )
+
+    if is_groundwater and ortslage:
+        return ortslage
+    if gewaesser and gewaesser.casefold() not in base.casefold():
+        return f"{base} ({gewaesser})"
+    return base or fallback
+
+
 class NiwisApiClient:
     """Client for the public NIWIS REST API."""
 

@@ -117,7 +117,8 @@ class NiwisBaseSensor(CoordinatorEntity[NiwisCoordinator], SensorEntity):
         self._messgroesse = messgroesse
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, nummer)},
-            name=f"{name} ({nummer})",
+            name=coordinator.station_name(nummer, name),
+            serial_number=nummer,
             manufacturer=MANUFACTURER,
             model=MESSGROESSE_DISPLAY.get(messgroesse, messgroesse),
             configuration_url="https://niwis-online.de/",

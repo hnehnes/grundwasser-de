@@ -52,6 +52,27 @@ kopieren und Home Assistant neu starten.
 - **Klassifikationsart** (`DYNAMISCH` – App-Standard – oder `STATISCH`).
 - **Weitere Messstellen** per Umkreis- oder Namenssuche nachrüsten.
 
+## Geräte, Namen & Gruppierung
+
+- Je **Messstelle** wird ein **Gerät** angelegt. Der Gerätename ist sprechend und
+  stammt aus den NIWIS-Stammdaten: **Ortslage** bei Grundwasser (z. B.
+  „Niederschönhausen (Pankow)"), **Name + Gewässer** bei Oberflächenwasser
+  (z. B. „Woltersdorf OP (Rüdersdorfer)"). Die technische Stations-ID steht als
+  **Seriennummer** am Gerät.
+- Die **Messgröße** (Grundwasserstand / Wasserstand / Abfluss / Quellschüttung)
+  steht als Geräte-**Modell** und ist über die passende `device_class` typisiert –
+  eine separate „Kategorie" ist in HA dafür nicht nötig (`entity_category` würde
+  die Sensoren fälschlich als *Diagnose* einstufen und ausblenden). Zum Sortieren
+  eignen sich **HA-Labels** oder die Gruppierung im **Dashboard** (siehe unten).
+
+## Beispiel-Dashboard
+
+Ein fertiges Beispiel mit Verlaufs-/Statistik-Graphen liegt unter
+[`examples/niwis-dashboard.yaml`](examples/niwis-dashboard.yaml) – Sektionen je
+Messgröße, aktueller Wert, Niedrigwasserklasse und History-Graph. Einfach den
+Raw-Konfigurationseditor eines neuen Dashboards damit füllen und die entity_ids
+an deine Messstellen anpassen.
+
 ## Datenquelle & Attribution
 
 Datenbasis: **Niedrigwasserinformationssystem NIWIS** der Bundesanstalt für
@@ -59,10 +80,16 @@ Gewässerkunde (BfG), Bund/Länder und DWD – [niwis-online.de](https://niwis-o
 Bitte die jeweils geltenden Nutzungs-/Datenlizenzbedingungen der BfG beachten.
 Diese Integration steht in keiner Verbindung zur BfG und wird nicht von ihr unterstützt.
 
+## Logo / brands
+
+Fertige Icon-/Logo-Dateien liegen unter
+[`brands/custom_integrations/niwis/`](brands/custom_integrations/niwis/)
+(`icon.png` 256×256, `icon@2x.png` 512×512, `logo.png`, `logo@2x.png`). Für die
+Anzeige in Home Assistant und HACS die Dateien per PR bei
+[home-assistant/brands](https://github.com/home-assistant/brands) unter
+`custom_integrations/niwis/` einreichen.
+
 ## Hinweise
 
-- Für ein Integrations-Icon/-Logo in Home Assistant und HACS einen PR bei
-  [home-assistant/brands](https://github.com/home-assistant/brands) mit der
-  Domain `niwis` anlegen.
 - Vor der Aufnahme in den HACS-Default-Store das Repository öffentlich machen und
-  einmalig ein Release/Tag (z. B. `v1.0.0`) erstellen.
+  einmalig ein Release/Tag (z. B. `v1.0.1`) erstellen.

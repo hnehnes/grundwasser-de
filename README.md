@@ -1,7 +1,7 @@
 # Grundwasser (Deutschland) für Home Assistant
 
-[![hassfest](https://github.com/hnehnes/niwis/actions/workflows/hassfest.yml/badge.svg)](https://github.com/hnehnes/niwis/actions/workflows/hassfest.yml)
-[![HACS](https://github.com/hnehnes/niwis/actions/workflows/hacs.yml/badge.svg)](https://github.com/hnehnes/niwis/actions/workflows/hacs.yml)
+[![hassfest](https://github.com/hnehnes/grundwasser-de/actions/workflows/hassfest.yml/badge.svg)](https://github.com/hnehnes/grundwasser-de/actions/workflows/hassfest.yml)
+[![HACS](https://github.com/hnehnes/grundwasser-de/actions/workflows/hacs.yml/badge.svg)](https://github.com/hnehnes/grundwasser-de/actions/workflows/hacs.yml)
 
 Home-Assistant-Integration für **Grundwasserstände in Deutschland** aus mehreren
 Quellen hinter einer gemeinsamen **Provider-Architektur**. Deutschland-Grundwasser
@@ -40,7 +40,7 @@ Die Quelle steht als **Hersteller** am Gerät, die Stations-ID als **Seriennumme
 ### HACS (empfohlen)
 
 1. HACS öffnen → *Integrationen* → Menü → **Benutzerdefinierte Repositories**.
-2. `https://github.com/hnehnes/niwis` als Kategorie *Integration* hinzufügen.
+2. `https://github.com/hnehnes/grundwasser-de` als Kategorie *Integration* hinzufügen.
 3. „Grundwasser (Deutschland)" installieren und Home Assistant neu starten.
 
 ### Manuell

@@ -3,10 +3,10 @@
   "name": "Grundwasser (Deutschland)",
   "codeowners": ["@hnehnes"],
   "config_flow": true,
-  "documentation": "https://github.com/hnehnes/niwis",
+  "documentation": "https://github.com/hnehnes/grundwasser-de",
   "integration_type": "hub",
   "iot_class": "cloud_polling",
-  "issue_tracker": "https://github.com/hnehnes/niwis/issues",
+  "issue_tracker": "https://github.com/hnehnes/grundwasser-de/issues",
   "requirements": [],
   "version": "2.0.0"
 }

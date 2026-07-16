@@ -8,7 +8,7 @@ Stand: 2026-07-16. Dieser Brief fasst den aktuellen Stand zusammen, damit ein
 
 ## 1. Was existiert (NIWIS-Integration – fertig, v1.0.2)
 
-- **Repo:** dieses Repo (lokal ausgecheckt) → GitHub `github.com/hnehnes/niwis` (public).
+- **Repo:** dieses Repo (lokal ausgecheckt) → GitHub `github.com/hnehnes/grundwasser-de` (public).
   Releases v1.0.0 / v1.0.1 / v1.0.2. CI (hassfest, HACS, pytest/ruff) grün.
 - **Installiert & läuft** in der HA-Instanz des Nutzers (via HACS Custom Repository).
 - **HA-Zugang:** Home-Assistant-MCP-Server `home-assistant` (ha-mcp, stdio via uvx) ist
@@ -35,7 +35,7 @@ Stand: 2026-07-16. Dieser Brief fasst den aktuellen Stand zusammen, damit ein
 ### Offene NIWIS-Restpunkte (klein)
 1. **brands-PR**: Icon/Logo liegen in `brands/custom_integrations/niwis/` → PR bei
    `home-assistant/brands` (nötig für HACS-Default + Icon-Anzeige).
-2. **HACS-Default-PR**: `hnehnes/niwis` bei `hacs/default` eintragen (dann in HACS
+2. **HACS-Default-PR**: `hnehnes/grundwasser-de` bei `hacs/default` eintragen (dann in HACS
    suchbar). Voraussetzungen erfüllt.
 3. **Repo-Beispiel-Dashboard** `examples/niwis-dashboard.yaml` auf das finale
    Tabellen-Layout bringen (aktuell Kachel-Variante).

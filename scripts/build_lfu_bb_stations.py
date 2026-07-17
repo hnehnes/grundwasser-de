@@ -111,6 +111,7 @@ def _read_shapefile(path: Path) -> list[dict]:
 
 
 def main() -> None:
+    """Build the bundled LfU-BB station list from shapefile + APW classification."""
     if len(sys.argv) < 2:
         sys.exit("usage: build_lfu_bb_stations.py path/to/gw_basis_mn[.shp]")
     cookies = Path("cookies.txt").resolve()

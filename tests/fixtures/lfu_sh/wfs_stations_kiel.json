@@ -1,0 +1,53 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "APP_GWMN_162",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.220973609291242,
+          54.23112481050614
+        ]
+      },
+      "properties": {
+        "Kurznummer": "6287.0",
+        "Messstellenname": "SIEVERSDORF NORD",
+        "Link": "https://umweltanwendungen.schleswig-holstein.de/db/dbnuis?thema=lgdms&ms_nr= 10L57058003&ubs=ja&kopf"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "APP_GWMN_161",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.22432300214954,
+          54.331170347585
+        ]
+      },
+      "properties": {
+        "Kurznummer": "6277.0",
+        "Messstellenname": "SCHĂNKIRCHEN HOLZKATEN",
+        "Link": "https://umweltanwendungen.schleswig-holstein.de/db/dbnuis?thema=lgdms&ms_nr= 10L57074002&ubs=ja&kopf"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "APP_GWMN_219",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.171093106351494,
+          54.3097498237747
+        ]
+      },
+      "properties": {
+        "Kurznummer": "6377.0",
+        "Messstellenname": "KIEL-ELLERBEK POPPENRADE",
+        "Link": "https://umweltanwendungen.schleswig-holstein.de/db/dbnuis?thema=lgdms&ms_nr= 10L02016001&ubs=ja&kopf"
+      }
+    }
+  ]
+}

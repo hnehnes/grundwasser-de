@@ -25,16 +25,20 @@ from .base import (
 from .bukea_hh import BukeaHhProvider
 from .hlnug_he import HlnugHeProvider
 from .lfu_bb import LfuBbProvider
+from .lfu_sh import LfuShProvider
 from .niwis import NiwisProvider
+from .wasserportal_be import WasserportalBeProvider
 
 __all__ = [
     "BukeaHhProvider",
     "HlnugHeProvider",
     "LfuBbProvider",
+    "LfuShProvider",
     "NiwisProvider",
     "Provider",
     "ProviderCapabilityError",
     "ProviderError",
     "ProviderReading",
     "ProviderStation",
+    "WasserportalBeProvider",
 ]

@@ -30,11 +30,13 @@ from .providers import (
     BukeaHhProvider,
     HlnugHeProvider,
     LfuBbProvider,
+    LfuShProvider,
     NiwisProvider,
     Provider,
     ProviderError,
     ProviderReading,
     ProviderStation,
+    WasserportalBeProvider,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -45,6 +47,8 @@ PROVIDER_FACTORIES = {
     LfuBbProvider.domain: LfuBbProvider,
     BukeaHhProvider.domain: BukeaHhProvider,
     HlnugHeProvider.domain: HlnugHeProvider,
+    WasserportalBeProvider.domain: WasserportalBeProvider,
+    LfuShProvider.domain: LfuShProvider,
 }
 
 

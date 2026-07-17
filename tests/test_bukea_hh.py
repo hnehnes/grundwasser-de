@@ -68,7 +68,7 @@ class _FakeResponse:
         self._payload = payload
         self.status = 200
 
-    async def __aenter__(self) -> "_FakeResponse":
+    async def __aenter__(self) -> _FakeResponse:
         return self
 
     async def __aexit__(self, *exc) -> None:

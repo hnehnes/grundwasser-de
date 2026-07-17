@@ -27,6 +27,7 @@ from .const import (
     DOMAIN,
 )
 from .providers import (
+    BukeaHhProvider,
     LfuBbProvider,
     NiwisProvider,
     Provider,
@@ -41,6 +42,7 @@ _LOGGER = logging.getLogger(__name__)
 PROVIDER_FACTORIES = {
     NiwisProvider.domain: NiwisProvider,
     LfuBbProvider.domain: LfuBbProvider,
+    BukeaHhProvider.domain: BukeaHhProvider,
 }
 
 

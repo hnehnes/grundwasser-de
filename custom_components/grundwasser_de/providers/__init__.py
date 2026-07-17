@@ -22,10 +22,12 @@ from .base import (
     ProviderReading,
     ProviderStation,
 )
+from .bukea_hh import BukeaHhProvider
 from .lfu_bb import LfuBbProvider
 from .niwis import NiwisProvider
 
 __all__ = [
+    "BukeaHhProvider",
     "LfuBbProvider",
     "NiwisProvider",
     "Provider",

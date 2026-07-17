@@ -24,6 +24,7 @@ from .base import (
 )
 from .bukea_hh import BukeaHhProvider
 from .hlnug_he import HlnugHeProvider
+from .lanuk_nw import LanukNwProvider
 from .lfu_bb import LfuBbProvider
 from .lfu_sh import LfuShProvider
 from .niwis import NiwisProvider
@@ -32,6 +33,7 @@ from .wasserportal_be import WasserportalBeProvider
 __all__ = [
     "BukeaHhProvider",
     "HlnugHeProvider",
+    "LanukNwProvider",
     "LfuBbProvider",
     "LfuShProvider",
     "NiwisProvider",
